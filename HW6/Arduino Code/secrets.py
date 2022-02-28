@@ -1,2 +1,2 @@
-SSID=""
+SSID="Tufts_Wireless"
 PWD=""

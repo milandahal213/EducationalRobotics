@@ -14,7 +14,7 @@ import gc
 gc.collect()
 motor=servoM.Servo(15)
 
-
+print("Updated")
 
 try:
     ssid = secrets.SSID  
@@ -25,11 +25,11 @@ except:
 
 station = network.WLAN(network.STA_IF)
 
+
 station.active(True)
-if (password==""):
-    station.connect("Tufts_Wireless")
-else:
-    station.connect(ssid, password)
+station.connect("Tufts_Wireless")
+
+
 
 while station.isconnected() == False:
   pass
@@ -48,56 +48,73 @@ def play():
         time.sleep(1)
 
 
-def do(req):
+def doSomething(a):
+
+    response={'ret':''}
     global startF
     global playF
     global seq
-    print(type(req))
-    a=str(ujson.loads(req)) #Start, Stop , Ignore, o,45, 90,135, 180, Play
-    try:
-        if (a=="Start" and startF == False): 
-            print("Start")
-            startF=True
-            playF=False
-            seq=[]
 
-        elif(a=="Play" and playF==True):
-            print("Play")
-            play()
-        elif(startF==True):
-            print("Start is now False")
-            if(a=="Stop"):
-                print("Stop")
-                startF=False
-                playF=True
 
-            elif(a=="0"):
-                print(0)
-                seq.append(0)
+    if (a==b'Start' and startF == False):      
+        startF=True
+        playF=False
+        seq=[]
+        response['ret']="Start"
+        print("Start")
 
-            elif(a=="45"):
-                print(45)
-                seq.append(45)
+    elif(a==b'Play' and playF==True):
+        play()
+        response['ret']="Play"
+        print("Play")
+
+    elif(startF==True):
+        if(a==b'Stop'):
+            startF=False
+            playF=True
+            response['ret']="Stop"
+            print("Stop")
+
+        elif(a==b'0'):
             
-            elif(a=="90"):
-                print(90)
-                seq.append(90)
+            seq.append(0)
+            response['ret']="0"
+            print(0)
 
-            elif(a=="135"):
-                print(135)
-                seq.append(135)
+        elif(a==b'45'):
             
-            elif(a=="180"):
-                print(180)
-                seq.append(180)
+            seq.append(45)
+            response['ret']="45"
+            print(45)
+        
+        elif(a==b'90'):
+            
+            seq.append(90)
+            response['ret']="90"
+            print(90)
 
-            else:
-                pass
+        elif(a==b'135'):
+            
+            seq.append(135)
+            response['ret']="135"
+            print(135)
+        
+        elif(a==b'180'):
+            
+            seq.append(180)
+            response['ret']="180"
+            print(180)
+
         else:
+            pass
+
+    else:
         pass
 
-    except:
-        return("Error")
+    #except:
+        #response['ret']="Error"
+        
+    return(ujson.dumps(response))
 
 
 
@@ -122,7 +139,7 @@ while True:
         conn.send('Access-Control-Allow-Origin: *\n')
         conn.send('Access-Control-Allow-Credentials: true\n')
         conn.send('Application-Type: text/json\n')
-        conn.send('Content-Type: text/html\n')
+        conn.send('Content-Type: text/json\n')
         conn.send('Connection: close\n\n')
         conn.send(resp)
         conn.close()
